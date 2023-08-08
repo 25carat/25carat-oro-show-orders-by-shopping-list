@@ -47,7 +47,10 @@
       "ext-zlib": "8.1"
     },
     "allow-plugins": {
-      "phpro/grumphp-shim": true
+      "phpro/grumphp-shim": true,
+      "php-http/discovery": false,
+      "symfony/flex": true,
+      "symfony/runtime": true
     }
   },
   "repositories": {
