@@ -1,4 +1,4 @@
-on: [ push, pull_request ]
+on: [ push ]
 
 jobs:
   build:
@@ -10,14 +10,30 @@ jobs:
         php-versions:
           - "8.1"
           - "8.2"
+    env:
+      extensions: ''
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+
       - name: Configure PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          tools: composer:v2
+          extensions: ${{ env.extensions }}
+          tools: composer
+
+      - name: Get Composer Cache Directory
+        id: composer_cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer_cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-scripts
